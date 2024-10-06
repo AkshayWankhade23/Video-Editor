@@ -1,14 +1,11 @@
 'use client'
 
-import { useImageStore } from "@/lib/image-store"
 import { useLayerStore } from "@/lib/layer-store"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "./ui/dialog"
 import Lottie from "lottie-react"
 import loadingAnimation from '@/public/animations/loading.json'
 
 export default function Loading(){
-    const generating = useImageStore((state) => state.generating)
-    const setGenerating = useImageStore((state) => state.setGenerating)
     const activeLayer = useLayerStore((state) => state.activeLayer)
 
     return(

@@ -7,12 +7,11 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardHeader,
   CardTitle,
 } from "../ui/card";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { Car, Download } from "lucide-react";
+import { Download } from "lucide-react";
 
 export default function ExportAsset({ resource }: { resource: string }) {
   const activeLayer = useLayerStore((state) => state.activeLayer);
@@ -42,7 +41,7 @@ export default function ExportAsset({ resource }: { resource: string }) {
             document.body.removeChild(link)
             URL.revokeObjectURL(downloadUrl)
         } catch (error) {
-            console.log('download failed')
+            console.log(error,'download failed')
         }
     }
   }

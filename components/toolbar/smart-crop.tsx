@@ -22,11 +22,44 @@ export default function SmartCrop() {
   const setGenerating = useImageStore((state) => state.setGenerating);
   const activeLayer = useLayerStore((state) => state.activeLayer);
   const addLayer = useLayerStore((state) => state.addLayer);
-  const [height, setHeight] = useState(0);
-  const [width, setWidth] = useState(0);
   const [aspectRatio, setAspectRatio] = useState("16:9");
   const generating = useImageStore((state) => state.generating);
   const setActiveLayer = useLayerStore((state) => state.setActiveLayer);
+
+  const height = activeLayer?.height ?? 0; // Default to 0 if undefined
+  const width = activeLayer?.width ?? 0; // Default to 0 if undefined
+
+  const handleCrop = async () => {
+    if (!activeLayer?.url) return;
+
+    setGenerating(true);
+    const res = await genCrop({
+      height: height.toString(),
+      aspect: aspectRatio,
+      activeVideo: activeLayer.url,
+    });
+
+    setGenerating(false);
+
+    if (res?.data?.success) {
+      const newLayerId = crypto.randomUUID();
+      const thumbnailUrl = res.data.success.replace(/\.[^/.]+$/, ".jpg");
+
+      addLayer({
+        id: newLayerId,
+        name: "cropped " + activeLayer.name,
+        format: activeLayer.format,
+        height: height,
+        width: width,
+        url: res.data.success,
+        publicId: activeLayer.publicId,
+        resourceType: "video",
+        poster: thumbnailUrl,
+      });
+
+      setActiveLayer(newLayerId);
+    }
+  };
 
   return (
     <Popover>
@@ -48,92 +81,38 @@ export default function SmartCrop() {
         </div>
         <h4 className="text-md font-medium pb-2">Format</h4>
         <div className="flex gap-4 items-center justify-center pb-2">
-          <Card
-            className={cn(
-              aspectRatio === "16:9" ? "border-primary" : "",
-              "p-4 w-36 cursor-pointer"
-            )}
-            onClick={() => setAspectRatio("16:9")}
-          >
-            <CardHeader className="text-center p-0">
-              <CardTitle className="text-md">YouTube</CardTitle>
-              <CardDescription>
-                <p className="text-sm font-bold">16:9</p>
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="flex items-center justify-center p-0 pt-2">
-              <Youtube />
-            </CardContent>
-          </Card>
-          <Card
-            className={cn(
-              aspectRatio === "9:16" ? "border-primary" : "",
-              "p-4 w-36 cursor-pointer"
-            )}
-            onClick={() => setAspectRatio("9:16")}
-          >
-            <CardHeader className="text-center p-0">
-              <CardTitle className="text-md">TikTok</CardTitle>
-              <CardDescription>
-                <p className="text-sm font-bold">9:16</p>
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="flex items-center justify-center p-0 pt-2">
-              <TikTok />
-            </CardContent>
-          </Card>
-          <Card
-            className={cn(
-              aspectRatio === "1:1" ? "border-primary" : "",
-              "p-4 w-36 cursor-pointer"
-            )}
-            onClick={() => setAspectRatio("1:1")}
-          >
-            <CardHeader className="text-center p-0">
-              <CardTitle className="text-md">Square</CardTitle>
-              <CardDescription>
-                <p className="text-sm font-bold">1:1</p>
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="flex items-center justify-center p-0 pt-2">
-              <Square className="w-10 h-10" />
-            </CardContent>
-          </Card>
+          {["16:9", "9:16", "1:1"].map((ratio) => (
+            <Card
+              key={ratio}
+              className={cn(
+                aspectRatio === ratio ? "border-primary" : "",
+                "p-4 w-36 cursor-pointer"
+              )}
+              onClick={() => setAspectRatio(ratio)}
+            >
+              <CardHeader className="text-center p-0">
+                <CardTitle className="text-md">
+                  {ratio === "16:9" ? "YouTube" : ratio === "9:16" ? "TikTok" : "Square"}
+                </CardTitle>
+                <CardDescription>
+                  <p className="text-sm font-bold">{ratio}</p>
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="flex items-center justify-center p-0 pt-2">
+                {ratio === "16:9" && <Youtube />}
+                {ratio === "9:16" && <TikTok />}
+                {ratio === "1:1" && <Square className="w-10 h-10" />}
+              </CardContent>
+            </Card>
+          ))}
         </div>
         <Button
-          onClick={async (e) => {
-            setGenerating(true);
-            const res = await genCrop({
-              height: activeLayer.height!.toString(),
-              aspect: aspectRatio,
-              activeVideo: activeLayer.url!,
-            });
-            if(res?.data?.success){
-                setGenerating(false)
-                const newLayerId = crypto.randomUUID();
-                const thumbnailUrl = res.data.success.replace(/\.[^/.]+$/,".jpg")
-                addLayer({
-                    id: newLayerId,
-                    name: "croped" + activeLayer.name,
-                    format: activeLayer.format,
-                    height: height + activeLayer.height!,
-                    width: width + activeLayer.width!,
-                    url: res.data.success,
-                    publicId: activeLayer.publicId,
-                    resourceType: "video",
-                    poster: thumbnailUrl,
-                })
-                setActiveLayer(newLayerId)
-            }
-            if(res?.data?.error){
-                setGenerating(false)
-            }
-          }}
+          onClick={handleCrop}
           className="w-full mt-4"
-          variant={"outline"}
-          disabled={!activeLayer.url || generating}
+          variant="outline"
+          disabled={!activeLayer?.url || generating}
         >
-          {generating ? "Cropping..." : "Smart Crop "}
+          {generating ? "Cropping..." : "Smart Crop"}
         </Button>
       </PopoverContent>
     </Popover>

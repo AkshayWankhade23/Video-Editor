@@ -1,4 +1,3 @@
-import { uploadImage } from "@/server/upload-image";
 import React from "react";
 import { useDropzone } from "react-dropzone";
 import { Card, CardContent } from "../ui/card";
@@ -20,7 +19,7 @@ function UploadVideo() {
     accept: {
       "video/mp4": [".mp4", ".MP4"],
     },
-    onDrop: async (acceptFiles, fileRejections) => {
+    onDrop: async (acceptFiles) => {
       if (acceptFiles.length) {
         const formData = new FormData();
         formData.append("video", acceptFiles[0]);

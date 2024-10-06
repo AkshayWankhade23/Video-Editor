@@ -2,7 +2,6 @@
 
 import { ModeToggle } from "@/themes/mode-toggle";
 import Layers from "./layers/layers";
-import UploadImage from "./upload/upload-image";
 import ActiveImage from "./upload/active-image";
 import UploadForm from "./upload/upload-form";
 import { useLayerStore } from "@/lib/layer-store";

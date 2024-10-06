@@ -4,11 +4,10 @@ import { useImageStore } from "@/lib/image-store";
 import { useLayerStore } from "@/lib/layer-store";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Button } from "../ui/button";
-import { Eraser, Image, ImageOff } from "lucide-react";
+import {  ImageOff } from "lucide-react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { useState } from "react";
-import { genRemove } from "@/server/gen-remove";
 import { bgReplace } from "@/server/bg-replace";
 
 export default function BackgroundReplace() {

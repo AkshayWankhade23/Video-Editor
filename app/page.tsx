@@ -1,7 +1,5 @@
 "use client";
-import Image from "next/image";
 import Editor from "@/components/editor";
-import UploadImage from "@/components/upload/upload-image";
 import { ImageStore } from "@/lib/image-store";
 import { LayerStore } from "@/lib/layer-store";
 

@@ -7,6 +7,7 @@ export async function checkImageProcessing(url: string) {
         return false
     }
     catch(error) {
+        console.log(error)
         return false
     }
 }

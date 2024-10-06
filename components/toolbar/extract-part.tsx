@@ -4,12 +4,10 @@ import { useImageStore } from "@/lib/image-store";
 import { useLayerStore } from "@/lib/layer-store";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Button } from "../ui/button";
-import { Eraser, Image, ImageOff, Scissors } from "lucide-react";
+import {  Scissors } from "lucide-react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { useState } from "react";
-import { genRemove } from "@/server/gen-remove";
-import { bgReplace } from "@/server/bg-replace";
 import { Checkbox } from "../ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { extractPart } from "@/server/extract-part";
@@ -54,7 +52,7 @@ export default function ExtractPart() {
         </div>
         <div className="grid gap-2">
           {prompts.map((prompt, index) => (
-            <div>
+            <div key={index}>
               <Label htmlFor={`prompt-${index}`}>Prompt {index + 1}</Label>
               <Input
                 id={`prompt-${index}`}
